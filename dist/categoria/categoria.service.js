@@ -25,6 +25,20 @@ let CategoriaService = class CategoriaService {
     async findAll() {
         return this.categoriaRepository.find();
     }
+    async findOne(id) {
+        return this.categoriaRepository.findOneByOrFail({ id });
+    }
+    async create(categoria) {
+        const newCategoria = this.categoriaRepository.create(categoria);
+        return this.categoriaRepository.save(newCategoria);
+    }
+    async update(id, categoria) {
+        await this.categoriaRepository.update(id, categoria);
+        return this.findOne(id);
+    }
+    async delete(id) {
+        await this.categoriaRepository.delete(id);
+    }
 };
 exports.CategoriaService = CategoriaService;
 exports.CategoriaService = CategoriaService = __decorate([

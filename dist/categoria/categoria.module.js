@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const categoria_entity_1 = require("./categoria.entity");
 const categoria_service_1 = require("./categoria.service");
+const categoria_controller_1 = require("./categoria.controller");
 let CategoriaModule = class CategoriaModule {
 };
 exports.CategoriaModule = CategoriaModule;
@@ -18,6 +19,7 @@ exports.CategoriaModule = CategoriaModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([categoria_entity_1.Categoria])],
         providers: [categoria_service_1.CategoriaService],
+        controllers: [categoria_controller_1.CategoriaController],
         exports: [categoria_service_1.CategoriaService],
     })
 ], CategoriaModule);
