@@ -11,13 +11,17 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const pedido_entity_1 = require("./pedido.entity");
 const pedido_service_1 = require("./pedido.service");
+const pedido_controller_1 = require("./pedido.controller");
+const producto_module_1 = require("../producto/producto.module");
+const usuario_module_1 = require("../usuario/usuario.module");
 let PedidoModule = class PedidoModule {
 };
 exports.PedidoModule = PedidoModule;
 exports.PedidoModule = PedidoModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([pedido_entity_1.Pedido])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([pedido_entity_1.Pedido]), producto_module_1.ProductoModule, usuario_module_1.UsuarioModule,],
         providers: [pedido_service_1.PedidoService],
+        controllers: [pedido_controller_1.PedidoController],
         exports: [pedido_service_1.PedidoService],
     })
 ], PedidoModule);
