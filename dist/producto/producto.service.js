@@ -17,45 +17,65 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const producto_entity_1 = require("./producto.entity");
-const path_1 = require("path");
+const categoria_service_1 = require("../categoria/categoria.service");
 let ProductoService = class ProductoService {
-    productoRepository;
-    constructor(productoRepository) {
+    constructor(productoRepository, categoriaService) {
         this.productoRepository = productoRepository;
+        this.categoriaService = categoriaService;
     }
     async findAll() {
-        return this.productoRepository.find({ relations: ['categoryId'] });
+        console.log('Intentando obtener todos los productos...');
+        try {
+            const productos = await this.productoRepository.find({
+                relations: ['categoria'],
+            });
+            console.log('Productos encontrados:', productos);
+            return productos;
+        }
+        catch (error) {
+            console.error('Error al obtener productos:', error);
+            throw error;
+        }
     }
     async findOne(id) {
-        return this.productoRepository.findOneOrFail({ where: { id }, relations: ['categoryId'] });
+        console.log('Intentando obtener producto con id:', id);
+        const producto = await this.productoRepository.findOne({
+            where: { id },
+            relations: ['categoria'],
+        });
+        if (!producto) {
+            console.log('Producto no encontrado con id:', id);
+            throw new Error('Producto no encontrado');
+        }
+        return producto;
     }
     async create(producto, file) {
         const newProducto = this.productoRepository.create(producto);
         if (file) {
-            const filename = `${Date.now()}${(0, path_1.extname)(file.originalname)}`;
-            newProducto.imageFilename = filename;
-            newProducto.imageUrl = `/uploads/${filename}`;
+            newProducto.imageFilename = file.filename;
+            newProducto.imageUrl = `http://localhost:3000/uploads/${file.filename}`;
         }
         return this.productoRepository.save(newProducto);
     }
     async update(id, producto, file) {
         const existingProducto = await this.findOne(id);
-        if (file) {
-            const filename = `${Date.now()}${(0, path_1.extname)(file.originalname)}`;
-            existingProducto.imageFilename = filename;
-            existingProducto.imageUrl = `/uploads/${filename}`;
-        }
         Object.assign(existingProducto, producto);
+        if (file) {
+            existingProducto.imageFilename = file.filename;
+            existingProducto.imageUrl = `http://localhost:3000/uploads/${file.filename}`;
+        }
         return this.productoRepository.save(existingProducto);
     }
     async delete(id) {
-        await this.productoRepository.delete(id);
+        const producto = await this.findOne(id);
+        await this.productoRepository.remove(producto);
     }
 };
 exports.ProductoService = ProductoService;
 exports.ProductoService = ProductoService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(producto_entity_1.Producto)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        categoria_service_1.CategoriaService])
 ], ProductoService);
 //# sourceMappingURL=producto.service.js.map

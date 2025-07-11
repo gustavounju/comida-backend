@@ -20,7 +20,6 @@ const admin_entity_1 = require("./admin.entity");
 const create_admin_dto_1 = require("./dto/create-admin.dto");
 const update_admin_dto_1 = require("./dto/update-admin.dto");
 let AdminController = class AdminController {
-    adminService;
     constructor(adminService) {
         this.adminService = adminService;
     }

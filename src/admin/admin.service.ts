@@ -2,9 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
-import * as bcrypt from 'bcrypt';
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -18,31 +16,32 @@ export class AdminService {
   }
 
   async findOne(id: number): Promise<Admin> {
-    return this.adminRepository.findOneByOrFail({ id });
+    const admin = await this.adminRepository.findOne({ where: { id } });
+    if (!admin) {
+      throw new Error('Administrador no encontrado');
+    }
+    return admin;
+  }
+
+  async findByUsername(username: string): Promise<Admin> {
+    const admin = await this.adminRepository.findOne({ where: { username } });
+    if (!admin) {
+      throw new Error('Administrador no encontrado');
+    }
+    return admin;
   }
 
   async create(createAdminDto: CreateAdminDto): Promise<Admin> {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(createAdminDto.password, salt);
-    const newAdmin = this.adminRepository.create({ ...createAdminDto, password: hashedPassword });
-    return this.adminRepository.save(newAdmin);
+    const admin = this.adminRepository.create(createAdminDto);
+    return this.adminRepository.save(admin); // save devuelve una promesa de Admin o Admin[]
   }
 
-  async update(id: number, updateAdminDto: UpdateAdminDto): Promise<Admin> {
-    const existingAdmin = await this.findOne(id);
-    if (updateAdminDto.password) {
-      const salt = await bcrypt.genSalt(10);
-      updateAdminDto.password = await bcrypt.hash(updateAdminDto.password, salt);
-    }
-    Object.assign(existingAdmin, updateAdminDto);
-    return this.adminRepository.save(existingAdmin);
+  async update(id: number, updateAdminDto: any): Promise<Admin> {
+    await this.adminRepository.update(id, updateAdminDto);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {
     await this.adminRepository.delete(id);
-  }
-
-  async findByUsername(username: string): Promise<Admin> {
-    return this.adminRepository.findOneByOrFail({ username });
   }
 }

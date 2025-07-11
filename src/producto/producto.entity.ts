@@ -2,38 +2,41 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Categoria } from '../categoria/categoria.entity';
 
-@Entity('producto')
+@Entity()
 export class Producto {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @ManyToOne(() => Categoria, (categoria) => categoria.id)
-  categoryId: number;
+  @Column()
+  categoryId!: number;
 
-  @Column({ length: 100, nullable: false })
-  name: string;
+  @ManyToOne(() => Categoria, (categoria) => categoria.productos)
+  categoria!: Categoria;
 
-  @Column({ type: 'float', nullable: false })
-  price: number;
+  @Column()
+  name!: string;
 
-  @Column({ length: 255, nullable: true })
-  imageFilename: string;
+  @Column()
+  price!: number;
 
-  @Column({ length: 255, nullable: true })
-  imageUrl: string;
+  @Column()
+  imageFilename!: string;
 
-  @Column({ default: true })
-  isAvailable: boolean;
+  @Column()
+  imageUrl!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  @Column()
+  isAvailable!: boolean;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

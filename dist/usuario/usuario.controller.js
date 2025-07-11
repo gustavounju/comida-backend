@@ -18,7 +18,6 @@ const swagger_1 = require("@nestjs/swagger");
 const usuario_service_1 = require("./usuario.service");
 const usuario_entity_1 = require("./usuario.entity");
 let UsuarioController = class UsuarioController {
-    usuarioService;
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
     }

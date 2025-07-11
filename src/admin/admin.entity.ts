@@ -1,25 +1,19 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('admin')
+@Entity()
 export class Admin {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column({ length: 100, unique: true, nullable: false })
-  username: string;
+  @Column({ unique: true })
+  username!: string;
 
-  @Column({ length: 255, nullable: false })
-  password: string;
+  @Column()
+  password!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

@@ -11,11 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Categoria = void 0;
 const typeorm_1 = require("typeorm");
+const producto_entity_1 = require("../producto/producto.entity");
 let Categoria = class Categoria {
-    id;
-    name;
-    createdAt;
-    updatedAt;
 };
 exports.Categoria = Categoria;
 __decorate([
@@ -23,18 +20,22 @@ __decorate([
     __metadata("design:type", Number)
 ], Categoria.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100, nullable: false }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Categoria.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Categoria.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp', nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Categoria.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => producto_entity_1.Producto, producto => producto.categoria),
+    __metadata("design:type", Array)
+], Categoria.prototype, "productos", void 0);
 exports.Categoria = Categoria = __decorate([
-    (0, typeorm_1.Entity)('categoria')
+    (0, typeorm_1.Entity)()
 ], Categoria);
 //# sourceMappingURL=categoria.entity.js.map

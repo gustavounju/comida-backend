@@ -11,17 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pedido = void 0;
 const typeorm_1 = require("typeorm");
-const producto_entity_1 = require("../producto/producto.entity");
-const usuario_entity_1 = require("../usuario/usuario.entity");
 let Pedido = class Pedido {
-    id;
-    productId;
-    userId;
-    totalAmount;
-    status;
-    paymentId;
-    createdAt;
-    updatedAt;
 };
 exports.Pedido = Pedido;
 __decorate([
@@ -29,38 +19,34 @@ __decorate([
     __metadata("design:type", Number)
 ], Pedido.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => producto_entity_1.Producto, (producto) => producto.id),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Pedido.prototype, "productId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => usuario_entity_1.Usuario, (usuario) => usuario.id),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Pedido.prototype, "userId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'float', nullable: false }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Pedido.prototype, "totalAmount", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: ['pendiente', 'pagado', 'entregado'],
-        default: 'pendiente',
-    }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Pedido.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: true }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Pedido.prototype, "paymentId", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Pedido.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp', nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Pedido.prototype, "updatedAt", void 0);
 exports.Pedido = Pedido = __decorate([
-    (0, typeorm_1.Entity)('pedido')
+    (0, typeorm_1.Entity)()
 ], Pedido);
 //# sourceMappingURL=pedido.entity.js.map

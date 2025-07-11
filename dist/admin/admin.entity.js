@@ -12,11 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Admin = void 0;
 const typeorm_1 = require("typeorm");
 let Admin = class Admin {
-    id;
-    username;
-    password;
-    createdAt;
-    updatedAt;
 };
 exports.Admin = Admin;
 __decorate([
@@ -24,22 +19,22 @@ __decorate([
     __metadata("design:type", Number)
 ], Admin.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100, unique: true, nullable: false }),
+    (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
 ], Admin.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: false }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Admin.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Admin.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp', nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Admin.prototype, "updatedAt", void 0);
 exports.Admin = Admin = __decorate([
-    (0, typeorm_1.Entity)('admin')
+    (0, typeorm_1.Entity)()
 ], Admin);
 //# sourceMappingURL=admin.entity.js.map

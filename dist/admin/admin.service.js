@@ -17,9 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const admin_entity_1 = require("./admin.entity");
-const bcrypt = require("bcrypt");
 let AdminService = class AdminService {
-    adminRepository;
     constructor(adminRepository) {
         this.adminRepository = adminRepository;
     }
@@ -27,28 +25,29 @@ let AdminService = class AdminService {
         return this.adminRepository.find();
     }
     async findOne(id) {
-        return this.adminRepository.findOneByOrFail({ id });
+        const admin = await this.adminRepository.findOne({ where: { id } });
+        if (!admin) {
+            throw new Error('Administrador no encontrado');
+        }
+        return admin;
+    }
+    async findByUsername(username) {
+        const admin = await this.adminRepository.findOne({ where: { username } });
+        if (!admin) {
+            throw new Error('Administrador no encontrado');
+        }
+        return admin;
     }
     async create(createAdminDto) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(createAdminDto.password, salt);
-        const newAdmin = this.adminRepository.create({ ...createAdminDto, password: hashedPassword });
-        return this.adminRepository.save(newAdmin);
+        const admin = this.adminRepository.create(createAdminDto);
+        return this.adminRepository.save(admin);
     }
     async update(id, updateAdminDto) {
-        const existingAdmin = await this.findOne(id);
-        if (updateAdminDto.password) {
-            const salt = await bcrypt.genSalt(10);
-            updateAdminDto.password = await bcrypt.hash(updateAdminDto.password, salt);
-        }
-        Object.assign(existingAdmin, updateAdminDto);
-        return this.adminRepository.save(existingAdmin);
+        await this.adminRepository.update(id, updateAdminDto);
+        return this.findOne(id);
     }
     async delete(id) {
         await this.adminRepository.delete(id);
-    }
-    async findByUsername(username) {
-        return this.adminRepository.findOneByOrFail({ username });
     }
 };
 exports.AdminService = AdminService;

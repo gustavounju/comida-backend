@@ -1,41 +1,28 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Producto } from '../producto/producto.entity';
-import { Usuario } from '../usuario/usuario.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('pedido')
+@Entity()
 export class Pedido {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @ManyToOne(() => Producto, (producto) => producto.id)
-  productId: number;
+  @Column()
+  productId!: number;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.id)
-  userId: number;
+  @Column()
+  userId!: number;
 
-  @Column({ type: 'float', nullable: false })
-  totalAmount: number;
+  @Column()
+  totalAmount!: number;
 
-  @Column({
-    type: 'enum',
-    enum: ['pendiente', 'pagado', 'entregado'],
-    default: 'pendiente',
-  })
-  status: string;
+  @Column()
+  status!: string;
 
-  @Column({ length: 255, nullable: true })
-  paymentId: string;
+  @Column()
+  paymentId!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }

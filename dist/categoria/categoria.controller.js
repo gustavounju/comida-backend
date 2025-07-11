@@ -18,7 +18,6 @@ const swagger_1 = require("@nestjs/swagger");
 const categoria_service_1 = require("./categoria.service");
 const categoria_entity_1 = require("./categoria.entity");
 let CategoriaController = class CategoriaController {
-    categoriaService;
     constructor(categoriaService) {
         this.categoriaService = categoriaService;
     }

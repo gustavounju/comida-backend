@@ -21,7 +21,6 @@ const multer_1 = require("multer");
 const swagger_1 = require("@nestjs/swagger");
 const path_1 = require("path");
 let ProductoController = class ProductoController {
-    productoService;
     constructor(productoService) {
         this.productoService = productoService;
     }

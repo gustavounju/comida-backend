@@ -18,7 +18,6 @@ const swagger_1 = require("@nestjs/swagger");
 const pedido_service_1 = require("./pedido.service");
 const pedido_entity_1 = require("./pedido.entity");
 let PedidoController = class PedidoController {
-    pedidoService;
     constructor(pedidoService) {
         this.pedidoService = pedidoService;
     }

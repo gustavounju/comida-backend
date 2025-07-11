@@ -3,15 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Producto } from './producto.entity';
 import { ProductoService } from './producto.service';
 import { ProductoController } from './producto.controller';
-import { MulterModule } from '@nestjs/platform-express';
+import { CategoriaModule } from '../categoria/categoria.module'; // Importamos CategoriaModule
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Producto]),
-    MulterModule.register({
-      dest: './uploads',
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([Producto]), CategoriaModule], // Añadimos CategoriaModule
   providers: [ProductoService],
   controllers: [ProductoController],
   exports: [ProductoService],

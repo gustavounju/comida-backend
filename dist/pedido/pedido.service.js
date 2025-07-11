@@ -20,9 +20,6 @@ const pedido_entity_1 = require("./pedido.entity");
 const producto_service_1 = require("../producto/producto.service");
 const usuario_service_1 = require("../usuario/usuario.service");
 let PedidoService = class PedidoService {
-    pedidoRepository;
-    productoService;
-    usuarioService;
     constructor(pedidoRepository, productoService, usuarioService) {
         this.pedidoRepository = pedidoRepository;
         this.productoService = productoService;
