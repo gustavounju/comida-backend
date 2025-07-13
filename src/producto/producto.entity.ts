@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Categoria } from '../categoria/categoria.entity';
 
 @Entity()
@@ -25,13 +18,13 @@ export class Producto {
   @Column()
   price!: number;
 
-  @Column()
+  @Column({ nullable: true })
   imageFilename!: string;
 
-  @Column()
+  @Column({ nullable: true })
   imageUrl!: string;
 
-  @Column()
+  @Column({ default: true })
   isAvailable!: boolean;
 
   @CreateDateColumn()

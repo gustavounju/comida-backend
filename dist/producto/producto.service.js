@@ -49,13 +49,9 @@ let ProductoService = class ProductoService {
         }
         return producto;
     }
-    async create(producto, file) {
-        const newProducto = this.productoRepository.create(producto);
-        if (file) {
-            newProducto.imageFilename = file.filename;
-            newProducto.imageUrl = `http://localhost:3000/uploads/${file.filename}`;
-        }
-        return this.productoRepository.save(newProducto);
+    async create(productoData) {
+        const producto = this.productoRepository.create(productoData);
+        return this.productoRepository.save(producto);
     }
     async update(id, producto, file) {
         const existingProducto = await this.findOne(id);

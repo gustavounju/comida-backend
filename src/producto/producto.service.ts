@@ -39,16 +39,21 @@ export class ProductoService {
     return producto;
   }
 
-  async create(
-    producto: Partial<Producto>,
-    file?: Express.Multer.File,
-  ): Promise<Producto> {
-    const newProducto = this.productoRepository.create(producto);
-    if (file) {
-      newProducto.imageFilename = file.filename;
-      newProducto.imageUrl = `http://localhost:3000/uploads/${file.filename}`;
-    }
-    return this.productoRepository.save(newProducto);
+  // async create(
+  //   producto: Partial<Producto>,
+  //   file?: Express.Multer.File,
+  // ): Promise<Producto> {
+  //   const newProducto = this.productoRepository.create(producto);
+  //   if (file) {
+  //     newProducto.imageFilename = file.filename;
+  //     newProducto.imageUrl = `http://localhost:3000/uploads/${file.filename}`;
+  //   }
+  //   return this.productoRepository.save(newProducto);
+  // }
+
+  async create(productoData: Partial<Producto>) {
+    const producto = this.productoRepository.create(productoData);
+    return this.productoRepository.save(producto);
   }
 
   async update(
