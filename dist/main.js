@@ -16,10 +16,11 @@ async function bootstrap() {
         .setDescription('API para venta de comidas online')
         .setVersion('1.0')
         .addTag('auth')
+        .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document);
-    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public/uploads'), { prefix: '/uploads/' });
+    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public/uploads'));
     await app.listen(3000);
 }
 bootstrap();

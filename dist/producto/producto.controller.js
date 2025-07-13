@@ -14,20 +14,15 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductoController = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 const producto_service_1 = require("./producto.service");
+const swagger_1 = require("@nestjs/swagger");
 let ProductoController = class ProductoController {
     constructor(productoService) {
         this.productoService = productoService;
     }
     async create(name, description, price, stock, categoryId, isAvailable = true) {
-        const productoData = {
-            name,
-            description,
-            price,
-            stock,
-            categoryId,
-            isAvailable,
-        };
+        const productoData = { name, description, price, stock, categoryId, isAvailable };
         const producto = await this.productoService.create(productoData);
         return producto;
     }
@@ -35,6 +30,22 @@ let ProductoController = class ProductoController {
 exports.ProductoController = ProductoController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                name: { type: 'string' },
+                description: { type: 'string' },
+                price: { type: 'number' },
+                stock: { type: 'number' },
+                categoryId: { type: 'number' },
+                isAvailable: { type: 'boolean', default: true },
+            },
+            required: ['name', 'price', 'stock', 'categoryId'],
+        },
+    }),
     __param(0, (0, common_1.Body)('name')),
     __param(1, (0, common_1.Body)('description')),
     __param(2, (0, common_1.Body)('price', common_1.ParseIntPipe)),
