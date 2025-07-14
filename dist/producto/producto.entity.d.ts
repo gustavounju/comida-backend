@@ -2,6 +2,7 @@ export declare class Producto {
     id: number;
     categoryId: number;
     name: string;
+    description: string;
     price: number;
     imageFilename: string;
     imageUrl: string;

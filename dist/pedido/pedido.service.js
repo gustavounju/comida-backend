@@ -28,31 +28,6 @@ let PedidoService = class PedidoService {
         this.productoService = productoService;
         this.usuarioService = usuarioService;
     }
-    async findAll() {
-        return this.pedidoRepository.find({ relations: ['productId', 'userId'] });
-    }
-    async findOne(id) {
-        return this.pedidoRepository.findOneOrFail({ where: { id }, relations: ['productId', 'userId'] });
-    }
-    async create(productId, userId) {
-        const producto = await this.productoService.findOne(productId);
-        const usuario = await this.usuarioService.findOne(userId);
-        const newPedido = this.pedidoRepository.create({
-            productId: productId,
-            userId: userId,
-            totalAmount: producto.price,
-            status: 'pendiente',
-        });
-        return this.pedidoRepository.save(newPedido);
-    }
-    async update(id, status) {
-        const existingPedido = await this.findOne(id);
-        existingPedido.status = status;
-        return this.pedidoRepository.save(existingPedido);
-    }
-    async delete(id) {
-        await this.pedidoRepository.delete(id);
-    }
 };
 exports.PedidoService = PedidoService;
 exports.PedidoService = PedidoService = __decorate([

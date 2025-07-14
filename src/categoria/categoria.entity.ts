@@ -1,22 +1,14 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Producto } from '../producto/producto.entity';
 
-@Entity('categoria')
+@Entity()
 export class Categoria {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column({ length: 100, nullable: false })
-  name: string;
+  @Column()
+  name!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt: Date;
+  @OneToMany(() => Producto, (producto) => producto.categoryId) // Cambia 'categoria' a 'categoryId'
+  productos!: Producto[];
 }

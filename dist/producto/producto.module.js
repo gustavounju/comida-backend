@@ -9,23 +9,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductoModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const producto_entity_1 = require("./producto.entity");
-const producto_service_1 = require("./producto.service");
 const producto_controller_1 = require("./producto.controller");
-const platform_express_1 = require("@nestjs/platform-express");
+const producto_service_1 = require("./producto.service");
+const producto_entity_1 = require("./producto.entity");
 let ProductoModule = class ProductoModule {
 };
 exports.ProductoModule = ProductoModule;
 exports.ProductoModule = ProductoModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            typeorm_1.TypeOrmModule.forFeature([producto_entity_1.Producto]),
-            platform_express_1.MulterModule.register({
-                dest: './uploads',
-            }),
-        ],
-        providers: [producto_service_1.ProductoService],
+        imports: [typeorm_1.TypeOrmModule.forFeature([producto_entity_1.Producto])],
         controllers: [producto_controller_1.ProductoController],
+        providers: [producto_service_1.ProductoService],
         exports: [producto_service_1.ProductoService],
     })
 ], ProductoModule);

@@ -11,11 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Producto = void 0;
 const typeorm_1 = require("typeorm");
-const categoria_entity_1 = require("../categoria/categoria.entity");
 let Producto = class Producto {
     id;
     categoryId;
     name;
+    description;
     price;
     imageFilename;
     imageUrl;
@@ -29,23 +29,27 @@ __decorate([
     __metadata("design:type", Number)
 ], Producto.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => categoria_entity_1.Categoria, (categoria) => categoria.id),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Producto.prototype, "categoryId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100, nullable: false }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Producto.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'float', nullable: false }),
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Producto.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Producto.prototype, "price", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: true }),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Producto.prototype, "imageFilename", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: true }),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Producto.prototype, "imageUrl", void 0);
 __decorate([
@@ -53,14 +57,14 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Producto.prototype, "isAvailable", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Producto.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)({ type: 'timestamp', nullable: true }),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Producto.prototype, "updatedAt", void 0);
 exports.Producto = Producto = __decorate([
-    (0, typeorm_1.Entity)('producto')
+    (0, typeorm_1.Entity)()
 ], Producto);
 //# sourceMappingURL=producto.entity.js.map

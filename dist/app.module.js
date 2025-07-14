@@ -10,34 +10,31 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
-const categoria_module_1 = require("./categoria/categoria.module");
 const producto_module_1 = require("./producto/producto.module");
-const usuario_module_1 = require("./usuario/usuario.module");
-const admin_module_1 = require("./admin/admin.module");
-const pedido_module_1 = require("./pedido/pedido.module");
+const categoria_module_1 = require("./categoria/categoria.module");
+const producto_entity_1 = require("./producto/producto.entity");
+const categoria_entity_1 = require("./categoria/categoria.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot(),
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'mysql',
                 host: process.env.DB_HOST || 'localhost',
                 port: parseInt(process.env.DB_PORT || '3306'),
                 username: process.env.DB_USERNAME || 'root',
                 password: process.env.DB_PASSWORD || 'tu_contraseña_aquí',
-                database: process.env.DB_DATABASE || 'comida_db',
-                entities: ['dist/**/*.entity{.ts,.js}'],
+                database: process.env.DB_DATABASE || 'delivery_db',
+                entities: [producto_entity_1.Producto, categoria_entity_1.Categoria, __dirname + '/**/*.entity{.ts,.js}'],
                 synchronize: true,
             }),
-            categoria_module_1.CategoriaModule,
             producto_module_1.ProductoModule,
-            usuario_module_1.UsuarioModule,
-            admin_module_1.AdminModule,
-            pedido_module_1.PedidoModule,
+            categoria_module_1.CategoriaModule,
         ],
+        controllers: [],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

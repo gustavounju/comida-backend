@@ -1,19 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Producto } from './producto.entity';
-import { ProductoService } from './producto.service';
 import { ProductoController } from './producto.controller';
-import { MulterModule } from '@nestjs/platform-express';
+import { ProductoService } from './producto.service';
+import { Producto } from './producto.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Producto]),
-    MulterModule.register({
-      dest: './uploads',
-    }),
-  ],
-  providers: [ProductoService],
+  imports: [TypeOrmModule.forFeature([Producto])],
   controllers: [ProductoController],
+  providers: [ProductoService],
   exports: [ProductoService],
 })
 export class ProductoModule {}
