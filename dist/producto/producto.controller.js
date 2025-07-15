@@ -20,6 +20,8 @@ const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const swagger_1 = require("@nestjs/swagger");
 const path_1 = require("path");
+const path_2 = require("path");
+const create_product_dto_1 = require("./dto/create-product.dto");
 let ProductoController = class ProductoController {
     productoService;
     constructor(productoService) {
@@ -29,31 +31,49 @@ let ProductoController = class ProductoController {
         return this.productoService.findAll();
     }
     async findOne(id) {
-        return this.productoService.findOne(id);
+        const product = await this.productoService.findOne(id);
+        if (!product)
+            throw new common_1.NotFoundException('Producto no encontrado');
+        return product;
     }
-    async create(producto, file) {
-        return this.productoService.create(producto, file);
+    async create(body, file) {
+        if (file) {
+            console.log('Archivo recibido:', file.originalname, 'guardado como:', file.filename, 'tamaño:', file.size, 'buffer:', file.buffer ? 'presente' : 'ausente');
+        }
+        else {
+            console.log('No se recibió archivo');
+        }
+        return this.productoService.saveProduct(body.productName, body.price, file?.filename || '', body.categoryId, body.description);
     }
-    async update(id, producto, file) {
-        return this.productoService.update(id, producto, file);
+    async updateImage(id, file) {
+        return this.productoService.updateProductImage(id, file.filename);
     }
     async delete(id) {
-        return this.productoService.delete(id);
+        await this.productoService.delete(id);
     }
 };
 exports.ProductoController = ProductoController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Lista todos los productos' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Lista de productos exitosa', type: [producto_entity_1.Producto] }),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener todos los productos' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Lista de productos exitosa',
+        type: [producto_entity_1.Producto],
+    }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductoController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Obtiene un producto por ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Producto encontrado', type: producto_entity_1.Producto }),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener un producto por ID' }),
+    (0, swagger_1.ApiParam)({ name: 'id', type: Number, description: 'ID del producto' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Producto encontrado',
+        type: producto_entity_1.Producto,
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Producto no encontrado' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -62,76 +82,86 @@ __decorate([
 ], ProductoController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-                const ext = (0, path_1.extname)(file.originalname);
-                cb(null, `${uniqueSuffix}${ext}`);
-            },
-        }),
-    })),
-    (0, swagger_1.ApiOperation)({ summary: 'Crea un nuevo producto con imagen opcional' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Producto creado', type: producto_entity_1.Producto }),
+    (0, swagger_1.ApiOperation)({ summary: 'Crear un nuevo producto con imagen opcional' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiBody)({
         schema: {
             type: 'object',
             properties: {
-                name: { type: 'string', example: 'mozzarella especial' },
-                description: { type: 'string', example: 'Pizza con mozzarella extra' },
+                productName: { type: 'string', example: 'mozzarella especial' },
                 price: { type: 'number', example: 12.5 },
-                stock: { type: 'number', example: 50 },
                 categoryId: { type: 'number', example: 1 },
-                isAvailable: { type: 'boolean', example: true },
+                description: {
+                    type: 'string',
+                    example: 'Descripción del producto',
+                    nullable: true,
+                },
                 image: { type: 'string', format: 'binary', example: 'imagen.jpg' },
             },
-            required: ['name', 'price', 'stock', 'categoryId'],
+            required: ['productName', 'price', 'categoryId'],
         },
     }),
-    __param(0, (0, common_1.Body)()),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Producto creado', type: producto_entity_1.Producto }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Categoría no encontrada' }),
+    (0, swagger_1.ApiResponse)({
+        status: 500,
+        description: 'Error interno al crear el producto',
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = (0, path_1.extname)(file.originalname);
+                const filename = `product-${uniqueSuffix}${ext}`;
+                console.log('Destino calculado:', (0, path_2.join)(__dirname, '../../uploads', filename));
+                cb(null, filename);
+            },
+        }),
+    })),
+    __param(0, (0, common_1.Body)(new common_1.ValidationPipe({ transform: true }))),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [create_product_dto_1.CreateProductDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProductoController.prototype, "create", null);
 __decorate([
-    (0, common_1.Put)(':id'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-                const ext = (0, path_1.extname)(file.originalname);
-                cb(null, `${uniqueSuffix}${ext}`);
-            },
-        }),
-    })),
-    (0, swagger_1.ApiOperation)({ summary: 'Actualiza un producto con imagen opcional' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Producto actualizado', type: producto_entity_1.Producto }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Producto no encontrado' }),
+    (0, common_1.Put)(':id/image'),
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar imagen del producto' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiBody)({
         schema: {
             type: 'object',
             properties: {
-                name: { type: 'string', example: 'mozzarella deluxe' },
-                description: { type: 'string', example: 'Pizza con mozzarella deluxe' },
-                price: { type: 'number', example: 13.5 },
-                stock: { type: 'number', example: 50 },
-                categoryId: { type: 'number', example: 1 },
-                isAvailable: { type: 'boolean', example: true },
-                image: { type: 'string', format: 'binary', example: 'nueva_imagen.jpg' },
+                image: { type: 'string', format: 'binary' },
             },
-            required: ['name', 'price', 'stock', 'categoryId'],
+            required: ['image'],
         },
     }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Imagen actualizada',
+        type: producto_entity_1.Producto,
+    }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Producto no encontrado' }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = (0, path_1.extname)(file.originalname);
+                const filename = `product-${uniqueSuffix}${ext}`;
+                console.log('Destino calculado:', (0, path_2.join)(__dirname, '../../uploads', filename));
+                cb(null, filename);
+            },
+        }),
+    })),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
-], ProductoController.prototype, "update", null);
+], ProductoController.prototype, "updateImage", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Elimina un producto' }),
@@ -144,7 +174,7 @@ __decorate([
 ], ProductoController.prototype, "delete", null);
 exports.ProductoController = ProductoController = __decorate([
     (0, swagger_1.ApiTags)('productos'),
-    (0, common_1.Controller)('productos'),
+    (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [producto_service_1.ProductoService])
 ], ProductoController);
 //# sourceMappingURL=producto.controller.js.map

@@ -17,41 +17,92 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const producto_entity_1 = require("./producto.entity");
+const categoria_entity_1 = require("../categoria/categoria.entity");
+const fs = require("fs/promises");
 const path_1 = require("path");
 let ProductoService = class ProductoService {
     productoRepository;
-    constructor(productoRepository) {
+    categoriaRepository;
+    directoryUploads = process.env.DIRECTORY_UPLOADS || 'uploads';
+    constructor(productoRepository, categoriaRepository) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
     async findAll() {
-        return this.productoRepository.find();
+        return this.productoRepository.find({ relations: ['categoria'] });
     }
     async findOne(id) {
-        return this.productoRepository.findOneOrFail({ where: { id } });
-    }
-    async create(producto, file) {
-        const newProducto = this.productoRepository.create({
-            ...producto,
-            isAvailable: producto.isAvailable !== undefined ? producto.isAvailable : true,
+        return this.productoRepository.findOne({
+            where: { id },
+            relations: ['categoria'],
         });
-        if (file) {
-            const filename = `${Date.now()}${(0, path_1.extname)(file.originalname)}`;
-            newProducto.imageFilename = filename;
-            newProducto.imageUrl = `http://localhost:3000/uploads/${filename}`;
-        }
-        return this.productoRepository.save(newProducto);
     }
-    async update(id, producto, file) {
-        const existingProducto = await this.findOne(id);
-        if (file) {
-            const filename = `${Date.now()}${(0, path_1.extname)(file.originalname)}`;
-            existingProducto.imageFilename = filename;
-            existingProducto.imageUrl = `http://localhost:3000/uploads/${filename}`;
+    async saveProduct(productName, price, filename, categoryId, description) {
+        const url = `/uploads/${filename}`;
+        const categoria = await this.categoriaRepository.findOneBy({
+            id: categoryId,
+        });
+        if (!categoria) {
+            const filePath = (0, path_1.join)(__dirname, '..', '..', this.directoryUploads, filename);
+            try {
+                await fs.access(filePath);
+                await fs.unlink(filePath);
+                console.log(`Imagen ${filename} eliminada por fallo de categoría`);
+            }
+            catch (err) {
+                console.log(`No se pudo eliminar ${filename}: ${err.message}`);
+            }
+            throw new common_1.NotFoundException(`Categoría con ID ${categoryId} no encontrada`);
         }
-        Object.assign(existingProducto, producto);
-        return this.productoRepository.save(existingProducto);
+        const producto = this.productoRepository.create({
+            name: productName,
+            price,
+            imageFilename: filename,
+            imageUrl: url,
+            categoryId,
+            isAvailable: true,
+            description: description || 'Sin descripción',
+        });
+        try {
+            return await this.productoRepository.save(producto);
+        }
+        catch (error) {
+            const filePath = (0, path_1.join)(__dirname, '..', '..', this.directoryUploads, filename);
+            try {
+                await fs.access(filePath);
+                await fs.unlink(filePath);
+                console.log(`Imagen ${filename} eliminada por fallo de inserción`);
+            }
+            catch (err) {
+                console.log(`No se pudo eliminar ${filename}: ${err.message}`);
+            }
+            console.error('Error al guardar el producto:', error);
+            throw new Error('Error interno al crear el producto');
+        }
+    }
+    async updateProductImage(id, filename) {
+        const producto = await this.productoRepository.findOneBy({ id });
+        if (!producto)
+            throw new common_1.NotFoundException('Producto no encontrado');
+        producto.imageFilename = filename;
+        producto.imageUrl = `/uploads/${filename}`;
+        return this.productoRepository.save(producto);
     }
     async delete(id) {
+        const producto = await this.findOne(id);
+        if (!producto)
+            throw new common_1.NotFoundException('Producto no encontrada');
+        if (producto.imageFilename) {
+            const filePath = (0, path_1.join)(__dirname, '..', '..', this.directoryUploads, producto.imageFilename);
+            try {
+                await fs.access(filePath);
+                await fs.unlink(filePath);
+                console.log(`Imagen ${producto.imageFilename} eliminada al borrar producto`);
+            }
+            catch (err) {
+                console.log(`No se pudo eliminar ${producto.imageFilename}: ${err.message}`);
+            }
+        }
         await this.productoRepository.delete(id);
     }
 };
@@ -59,6 +110,8 @@ exports.ProductoService = ProductoService;
 exports.ProductoService = ProductoService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(producto_entity_1.Producto)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(categoria_entity_1.Categoria)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], ProductoService);
 //# sourceMappingURL=producto.service.js.map

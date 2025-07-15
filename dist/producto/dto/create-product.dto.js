@@ -9,28 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Categoria = void 0;
-const typeorm_1 = require("typeorm");
-const producto_entity_1 = require("../producto/producto.entity");
-let Categoria = class Categoria {
-    id;
-    name;
-    productos;
-};
-exports.Categoria = Categoria;
+exports.CreateProductDto = void 0;
+const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+class CreateProductDto {
+    productName;
+    price;
+    categoryId;
+    description;
+}
+exports.CreateProductDto = CreateProductDto;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
-], Categoria.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], Categoria.prototype, "name", void 0);
+], CreateProductDto.prototype, "productName", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => producto_entity_1.Producto, (producto) => producto.categoria),
-    __metadata("design:type", Array)
-], Categoria.prototype, "productos", void 0);
-exports.Categoria = Categoria = __decorate([
-    (0, typeorm_1.Entity)()
-], Categoria);
-//# sourceMappingURL=categoria.entity.js.map
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "price", void 0);
+__decorate([
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateProductDto.prototype, "categoryId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "description", void 0);
+//# sourceMappingURL=create-product.dto.js.map

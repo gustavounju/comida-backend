@@ -17,26 +17,38 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const categoria_entity_1 = require("./categoria.entity");
+const producto_entity_1 = require("../producto/producto.entity");
 let CategoriaService = class CategoriaService {
     categoriaRepository;
-    constructor(categoriaRepository) {
+    productoRepository;
+    constructor(categoriaRepository, productoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.productoRepository = productoRepository;
     }
     async findAll() {
         return this.categoriaRepository.find();
     }
     async findOne(id) {
-        return this.categoriaRepository.findOneByOrFail({ id });
+        return this.categoriaRepository.findOneBy({ id });
     }
-    async create(categoria) {
-        const newCategoria = this.categoriaRepository.create(categoria);
-        return this.categoriaRepository.save(newCategoria);
+    async create(name) {
+        const categoria = this.categoriaRepository.create({ name });
+        return this.categoriaRepository.save(categoria);
     }
-    async update(id, categoria) {
-        await this.categoriaRepository.update(id, categoria);
-        return this.findOne(id);
+    async update(categoria) {
+        return this.categoriaRepository.save(categoria);
     }
     async delete(id) {
+        const categoria = await this.findOne(id);
+        if (!categoria)
+            throw new common_1.NotFoundException('Categoría no encontrada');
+        const productosAsociados = await this.productoRepository.find({
+            where: { categoryId: id },
+        });
+        if (productosAsociados.length > 0) {
+            const nombresProductos = productosAsociados.map(p => p.name).join(', ');
+            throw new common_1.BadRequestException(`No se puede eliminar la categoría porque tiene productos asociados: ${nombresProductos}`);
+        }
         await this.categoriaRepository.delete(id);
     }
 };
@@ -44,6 +56,8 @@ exports.CategoriaService = CategoriaService;
 exports.CategoriaService = CategoriaService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(categoria_entity_1.Categoria)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(producto_entity_1.Producto)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], CategoriaService);
 //# sourceMappingURL=categoria.service.js.map

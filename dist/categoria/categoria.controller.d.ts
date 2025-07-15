@@ -5,7 +5,11 @@ export declare class CategoriaController {
     constructor(categoriaService: CategoriaService);
     findAll(): Promise<Categoria[]>;
     findOne(id: number): Promise<Categoria>;
-    create(categoria: Partial<Categoria>): Promise<Categoria>;
-    update(id: number, categoria: Partial<Categoria>): Promise<Categoria>;
+    create(body: {
+        name: string;
+    }): Promise<Categoria>;
+    update(id: number, body: {
+        name: string;
+    }): Promise<Categoria>;
     delete(id: number): Promise<void>;
 }

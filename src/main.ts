@@ -1,22 +1,25 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Configuración de Swagger
   const config = new DocumentBuilder()
-    .setTitle('Comida Backend API')
-    .setDescription('API para la gestión de una tienda de comidas online')
+    .setTitle('Productos y Categorías API')
+    .setDescription('CRUD de productos y categorías con imagen')
     .setVersion('1.0')
-    .addTag('categorias')
-    .addTag('productos')
-    .addTag('usuarios')
-    .addTag('admins')
-    .addTag('pedidos')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document); // Acceso por /api
+
+  // Servir archivos estáticos desde uploads
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads',
+  });
 
   await app.listen(3000);
 }

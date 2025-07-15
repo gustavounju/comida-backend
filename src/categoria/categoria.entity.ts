@@ -9,6 +9,6 @@ export class Categoria {
   @Column()
   name!: string;
 
-  @OneToMany(() => Producto, (producto) => producto.categoryId) // Cambia 'categoria' a 'categoryId'
+  @OneToMany(() => Producto, (producto) => producto.categoria) // Corregido a producto.categoria
   productos!: Producto[];
 }

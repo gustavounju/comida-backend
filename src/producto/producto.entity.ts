@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Categoria } from '../categoria/categoria.entity';
 
 @Entity()
 export class Producto {
@@ -7,6 +8,9 @@ export class Producto {
 
   @Column()
   categoryId!: number;
+
+  @ManyToOne(() => Categoria, categoria => categoria.productos) // Relación ManyToOne con Categoria
+  categoria!: Categoria; // Propiedad que referencia a la categoría
 
   @Column()
   name!: string;

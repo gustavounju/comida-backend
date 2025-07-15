@@ -14,9 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriaController = void 0;
 const common_1 = require("@nestjs/common");
-const swagger_1 = require("@nestjs/swagger");
 const categoria_service_1 = require("./categoria.service");
 const categoria_entity_1 = require("./categoria.entity");
+const swagger_1 = require("@nestjs/swagger");
 let CategoriaController = class CategoriaController {
     categoriaService;
     constructor(categoriaService) {
@@ -26,42 +26,68 @@ let CategoriaController = class CategoriaController {
         return this.categoriaService.findAll();
     }
     async findOne(id) {
-        return this.categoriaService.findOne(id);
+        const categoria = await this.categoriaService.findOne(id);
+        if (!categoria)
+            throw new common_1.NotFoundException('Categoría no encontrada');
+        return categoria;
     }
-    async create(categoria) {
-        return this.categoriaService.create(categoria);
+    async create(body) {
+        return this.categoriaService.create(body.name);
     }
-    async update(id, categoria) {
-        return this.categoriaService.update(id, categoria);
+    async update(id, body) {
+        const categoria = await this.categoriaService.findOne(id);
+        if (!categoria)
+            throw new common_1.NotFoundException('Categoría no encontrada');
+        categoria.name = body.name;
+        return this.categoriaService.update(categoria);
     }
     async delete(id) {
-        return this.categoriaService.delete(id);
+        await this.categoriaService.delete(id);
     }
 };
 exports.CategoriaController = CategoriaController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Lista todas las categorías' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Lista de categorías exitosa', type: [categoria_entity_1.Categoria] }),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener todas las categorías' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Lista de categorías exitosa',
+        type: [categoria_entity_1.Categoria],
+    }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CategoriaController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Obtiene una categoría por ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Categoría encontrada', type: categoria_entity_1.Categoria }),
+    (0, swagger_1.ApiOperation)({ summary: 'Obtener una categoría por ID' }),
+    (0, swagger_1.ApiParam)({ name: 'id', type: Number, description: 'ID de la categoría' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Categoría encontrada',
+        type: categoria_entity_1.Categoria,
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Categoría no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], CategoriaController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Crea una nueva categoría' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Categoría creada', type: categoria_entity_1.Categoria }),
-    (0, swagger_1.ApiBody)({ schema: { example: { name: 'postres' } } }),
+    (0, swagger_1.ApiOperation)({ summary: 'Crear una nueva categoría' }),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+            required: ['name'],
+        },
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'Categoría creada',
+        type: categoria_entity_1.Categoria,
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -69,11 +95,22 @@ __decorate([
 ], CategoriaController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Actualiza una categoría' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Categoría actualizada', type: categoria_entity_1.Categoria }),
+    (0, swagger_1.ApiOperation)({ summary: 'Actualizar una categoría por ID' }),
+    (0, swagger_1.ApiParam)({ name: 'id', type: Number, description: 'ID de la categoría' }),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+            required: ['name'],
+        },
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Categoría actualizada',
+        type: categoria_entity_1.Categoria,
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Categoría no encontrada' }),
-    (0, swagger_1.ApiBody)({ schema: { example: { name: 'postres y bebidas' } } }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
@@ -81,17 +118,18 @@ __decorate([
 ], CategoriaController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Elimina una categoría' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Eliminar una categoría' }),
+    (0, swagger_1.ApiParam)({ name: 'id', type: Number, description: 'ID de la categoría' }),
     (0, swagger_1.ApiResponse)({ status: 204, description: 'Categoría eliminada' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Categoría no encontrada' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], CategoriaController.prototype, "delete", null);
 exports.CategoriaController = CategoriaController = __decorate([
     (0, swagger_1.ApiTags)('categorias'),
-    (0, common_1.Controller)('categorias'),
+    (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categoria_service_1.CategoriaService])
 ], CategoriaController);
 //# sourceMappingURL=categoria.controller.js.map
